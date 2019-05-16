@@ -5,6 +5,9 @@ namespace App\Http\Controllers;
 use App\Language;
 use App\Project;
 use App\Project_Attending;
+use App\Repositories\LanguageRepository;
+use App\Repositories\LocationRepository;
+use App\Repositories\ProjectAttendingRepository;
 use App\Repositories\ProjectRepository;
 use App\Repositories\TeamRepository;
 use App\Role;
@@ -18,11 +21,23 @@ class ProjectsController extends Controller
 {
     private $projectRepository;
     private $teamRepository;
+    private $languageRepository;
+    private $locationRepository;
+    private $projectAttendingRepository;
 
-    public function __construct(ProjectRepository $projectRepository, TeamRepository $teamRepository)
+    public function __construct(
+        ProjectRepository $projectRepository,
+        TeamRepository $teamRepository,
+        LanguageRepository $languageRepository,
+        LocationRepository $locationRepository,
+        ProjectAttendingRepository $projectAttendingRepository
+    )
     {
         $this->projectRepository = $projectRepository;
         $this->teamRepository = $teamRepository;
+        $this->languageRepository = $languageRepository;
+        $this->locationRepository = $locationRepository;
+        $this->projectAttendingRepository = $projectAttendingRepository;
     }
 
     public function showDetails()
@@ -49,25 +64,43 @@ class ProjectsController extends Controller
         return response()->json("User not logged in.");
     }
 
-    public function saveNewProject(Request $request)
+    public function saveProject(Request $request)
     {
-        $project_lead_id=Auth::user()!=null?Auth::id():null;
+        $project_lead_id=Auth::user() != null ? Auth::id() : null;
         $lazybot_id=User::where('username', 'lazybot')->first()->id;
         $this->projectRepository->validateNewProject($request);
-        $project = $this->projectRepository->createNewProject($request['project_new_name'], $request['project_new_description'], $request['project_new_sector'], $request['project_new_start_date'], $request['project_new_end_date'], $request['project_new_location'], $request['project_new_language']);
-        $team=$this->teamRepository->findOrCreateTeam($request['project_new_team'], $project->id);
-        $attendies = $this->projectRepository->addOpenPositions($request->input('project_new_cbox'), $project, $project_lead_id, $lazybot_id, $team->id);
-        $users = array();
-        if($attendies!=null){
-            $users = $this->projectRepository->returnAttendies($attendies);
+        if($request->has('id')){
+        $loc_id = $this->locationRepository->findOrCreateLocation($request['project_new_location']);
+        $lang_id = $this->languageRepository->addLanguage($request['project_new_language']);
+            $project = $this->projectRepository->createNewProject($request['project_new_name'],
+                $request['project_new_description'], $request['project_new_sector'],
+                $request['project_new_start_date'], $request['project_new_end_date'],
+                $loc_id , $lang_id, $request['id'] );
         }
-        return response()->json(["project"=>$project, "team"=>$users]);
+        else{
+            $loc_id = $this->locationRepository->findOrCreateLocation($request['project_new_location']);
+            $lang_id = $this->languageRepository->addLanguage($request['project_new_language']);
+            $project = $this->projectRepository->createNewProject($request['project_new_name'],
+                $request['project_new_description'], $request['project_new_sector'],
+                $request['project_new_start_date'], $request['project_new_end_date'],
+                $loc_id, $lang_id);
+        }
+
+        $team=$this->teamRepository->findOrCreateTeam($request['project_new_team'], $project->id);
+        //Dodaj opciju za attending
+//        $attendies = $this->projectRepository->addOpenPositions($request->input('project_new_cbox'), $project, $project_lead_id, $lazybot_id, $team->id);
+//        $users = array();
+//        if($attendies!=null){
+//            $users = $this->projectRepository->returnAttendies($attendies);
+//        }
+        return response()->json(['project'=>$project, $team]);
     }
 
 
 
     public function deleteProject(Request $request)
     {
+        $this->projectRepository->deleteProjectData($request['id']);
         $num_of_projects = Project::count();
         return response()->json(['num_of_projects' => $num_of_projects]);
     }

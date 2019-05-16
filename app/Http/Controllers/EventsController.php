@@ -49,7 +49,7 @@ class EventsController extends Controller
     }
 
     //Function for update of an event and save of a new event
-    public function saveNewEvent(Request $request)
+    public function saveEvent(Request $request)
     {
         $this->eventRepository->validateNewEvent($request);
         $event = null;

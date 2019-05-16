@@ -25,8 +25,11 @@ Route::group([
     Route::post('changeusername', 'AccountController@changeUsername');
     Route::post('changepassword', 'AccountController@changePassword');
     Route::get('home', 'HomeController@returnEventsAndProjects');
-    Route::post('events', 'EventsController@saveNewEvent');
+    Route::post('events', 'EventsController@saveEvent');
     Route::delete('events', 'EventsController@deleteEvent');
     Route::get('events', 'EventsController@showDetails');
+    Route::get('projects', 'ProjectsController@showDetails');
+    Route::post('projects', 'ProjectsController@saveProject');
+    Route::delete('projects', 'ProjectsController@deleteProject');
 });
 

@@ -14,20 +14,7 @@ use Illuminate\Http\Request;
  */
 class ProjectRepository implements ProjectRepositoryInterface
 {
-    private $languageRepository;
-    private $locationRepository;
-    private $projectAttendingRepository;
 
-    public function construct(
-        LanguageRepository $languageRepository,
-        LocationRepository $locationRepository,
-        ProjectAttendingRepository $projectAttendingRepository
-    )
-    {
-        $this->languageRepository = $languageRepository;
-        $this->locationRepository = $locationRepository;
-        $this->projectAttendingRepository = $projectAttendingRepository;
-    }
 
     public function model()
     {
@@ -53,30 +40,34 @@ class ProjectRepository implements ProjectRepositoryInterface
         ]);
     }
 
-    public function createNewProject($name, $description, $sector, $start_date, $end_date, $location, $language)
+    public function createNewProject($name, $description, $sector, $start_date, $end_date, $location, $language, $id = null)
     {
-        $project = new Project;
+        if($id!=null){
+            $project = Project::find($id);
+        } else {
+            $project = new Project;
+        }
         $project->name = $name;
         $project->description = $description;
         $project->sector = $sector;
         $project->start_date = $start_date;
         $project->end_date = $end_date;
-        $project->loc_id = $this->locationRepository->findOrCreateLocation($location);
-        $project->lang_id = $this->languageRepository->addLanguage($language);
+        $project->loc_id= $location;
+        $project->lang_id = $language;
         $project->save();
 
         return $project;
     }
 
-    public function addOpenPositions($openPositions, $project, $project_lead, $lazybot, $team_id)
-    {
-        $this->projectAttendingRepository->addNewProjectAttending("Lead", $project, $project_lead);
-        foreach ($openPositions as $openPosition) {
-            $this->projectAttendingRepository->addNewProjectAttending($openPosition, $project, $lazybot);
-        }
-
-        return Project_Attending::where('team_id', $team_id)->get();
-    }
+//    public function addOpenPositions($openPositions, $project, $project_lead, $lazybot, $team_id)
+//    {
+//        $this->projectAttendingRepository->addNewProjectAttending("Lead", $project, $project_lead);
+//        foreach ($openPositions as $openPosition) {
+//            $this->projectAttendingRepository->addNewProjectAttending($openPosition, $project, $lazybot);
+//        }
+//
+//        return Project_Attending::where('team_id', $team_id)->get();
+//    }
 
     public function elementExists($array, $element)
     {
@@ -123,7 +114,7 @@ class ProjectRepository implements ProjectRepositoryInterface
         $team = $project->team;
         $role = Role::where('title', 'lead')->get()->first()->id;
         $project_attending = Project_Attending::where('team_id', $team->id)->where('role_id', $role)->get()->first();
-        return $project_attending->user_id;
+        return $project_attending != null ? $project_attending->user_id : null;
     }
 
     public function returnAttendies($attendies)
@@ -140,24 +131,24 @@ class ProjectRepository implements ProjectRepositoryInterface
         $project = Project::where('id', $project_id)->first();
         if($project!=null){
             $team = $project->team != null ? $project->team : null;
-            $attendings = $team!=null ? Project_Attending::where('team_id', $team->id)->get() : null;
-            foreach ($attendings as $attending){
-                $attending->delete();
-            }
+//            $attendings = $team!=null ? Project_Attending::where('team_id', $team->id)->get() : null;
+//            foreach ($attendings as $attending){
+//                $attending->delete();
+//            }
             $team->delete();
-            $reviews=$project->reviews;
-            if(!$reviews==null){
-                foreach($reviews as $review){
-                    $review ->delete();
-
-                }
-            }
-            $applications=$project->project_applications;
-            if($applications!=null){
-                foreach($applications as $application){
-                    $application->delete();
-                }
-            }
+//            $reviews=$project->reviews;
+//            if(!$reviews==null){
+//                foreach($reviews as $review){
+//                    $review ->delete();
+//
+//                }
+//            }
+//            $applications=$project->project_applications;
+//            if($applications!=null){
+//                foreach($applications as $application){
+//                    $application->delete();
+//                }
+//            }
             $project->delete();
         }
 
