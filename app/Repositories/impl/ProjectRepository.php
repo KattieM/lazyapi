@@ -131,29 +131,10 @@ class ProjectRepository implements ProjectRepositoryInterface
         $project = Project::where('id', $project_id)->first();
         if($project!=null){
             $team = $project->team != null ? $project->team : null;
-//            $attendings = $team!=null ? Project_Attending::where('team_id', $team->id)->get() : null;
-//            foreach ($attendings as $attending){
-//                $attending->delete();
-//            }
             $team->delete();
-//            $reviews=$project->reviews;
-//            if(!$reviews==null){
-//                foreach($reviews as $review){
-//                    $review ->delete();
-//
-//                }
-//            }
-//            $applications=$project->project_applications;
-//            if($applications!=null){
-//                foreach($applications as $application){
-//                    $application->delete();
-//                }
-//            }
             $project->delete();
+            return true;
         }
-
-
-
-
+        return false;
     }
 }

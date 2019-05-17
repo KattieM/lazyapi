@@ -76,15 +76,6 @@ class EventsController extends Controller
 
     }
 
-//    public function deleteOrUnattendEvent(Request $request)
-//    {
-//        if ($request->has('attend')) {
-//            return $this->unattendEvent($request);
-//        } else {
-//            return $this->deleteEvent($request);
-//        }
-//    }
-
     public function deleteEvent(Request $request)
     {
         Event_Attending::where('event_id', $request['id'])->forceDelete();
@@ -93,41 +84,7 @@ class EventsController extends Controller
         return response()->json(['num_of_events' => $num_of_events]);
     }
 
-//    public function updateEvent(Request $request)
-//    {
-//        $event = Event::where('id', $request['id'])->forceDelete();
-//        $event->name = $request['event_new_name'];
-//        $event->description = $request['event_new_description'];
-//        $event->date = $request['event_new_date'];
-//        $event->time = $request['event_new_time'];
-//        $event->loc_id = $this->locationRepository->findOrCreateLocation($request['event_new_location']);
-//        $event->lang_id = $this->languageRepository->addLanguage($request['event_new_language']);
-//        $event->save();
-//        $num_of_events = Event::count();
-//        return response()->json(['num_of_events' => $num_of_events]);
-//    }
-
-//    public function attendEvent(Request $request)
-//    {
-//        $msg = "";
-//        $event_id = $request['id'];
-//        $user_id = Auth::id();
-//        $role = Role::where('title', 'attendee')->where('project/event', 'event')->get()->first();
-//        $event_attendings = Event_Attending::where('user_id', $user_id)->where('event_id', $event_id)->get();
-//        if ($event_attendings->isEmpty()) {
-//            Event_Attending::create(['event_id' => $event_id, 'role_id' => $role->id, 'user_id' => $user_id]);
-//        } else {
-//            $msg = "You have already attended this event!";
-//        }
-//        return response()->json(['msg' => $msg]);
-//    }
-//
-//    public function unattendEvent(Request $request)
-//    {
-//        $user_id = Auth::id();
-//        $role = Role::where('title', 'attendee')->where('project/event', 'event')->get()->first();
-//        $event_id = $request['id'];
-//        $event_attendings = Event_Attending::where('user_id', $user_id)->where('event_id', $event_id)->where('role_id', $role->id)->get()->first();
-//        $event_attendings->delete();
-//    }
+    public function showEventDetails($id){
+        return Event::findOrFail($id);
+    }
 }

@@ -66,12 +66,10 @@ class ProjectsController extends Controller
 
     public function saveProject(Request $request)
     {
-        $project_lead_id=Auth::user() != null ? Auth::id() : null;
-        $lazybot_id=User::where('username', 'lazybot')->first()->id;
         $this->projectRepository->validateNewProject($request);
         if($request->has('id')){
-        $loc_id = $this->locationRepository->findOrCreateLocation($request['project_new_location']);
-        $lang_id = $this->languageRepository->addLanguage($request['project_new_language']);
+            $loc_id = $this->locationRepository->findOrCreateLocation($request['project_new_location']);
+            $lang_id = $this->languageRepository->addLanguage($request['project_new_language']);
             $project = $this->projectRepository->createNewProject($request['project_new_name'],
                 $request['project_new_description'], $request['project_new_sector'],
                 $request['project_new_start_date'], $request['project_new_end_date'],
@@ -87,12 +85,6 @@ class ProjectsController extends Controller
         }
 
         $team=$this->teamRepository->findOrCreateTeam($request['project_new_team'], $project->id);
-        //Dodaj opciju za attending
-//        $attendies = $this->projectRepository->addOpenPositions($request->input('project_new_cbox'), $project, $project_lead_id, $lazybot_id, $team->id);
-//        $users = array();
-//        if($attendies!=null){
-//            $users = $this->projectRepository->returnAttendies($attendies);
-//        }
         return response()->json(['project'=>$project, $team]);
     }
 
@@ -100,8 +92,15 @@ class ProjectsController extends Controller
 
     public function deleteProject(Request $request)
     {
-        $this->projectRepository->deleteProjectData($request['id']);
-        $num_of_projects = Project::count();
-        return response()->json(['num_of_projects' => $num_of_projects]);
+        $response = $this->projectRepository->deleteProjectData($request['id']);
+        if($response){
+            $num_of_projects = Project::count();
+            return response()->json(['num_of_projects' => $num_of_projects]);
+        }
+        return response()->json(['message'=>'Something went wrong']);
+    }
+
+    public function showProjectDetails($id){
+        return Project::findOrFail($id);
     }
 }
