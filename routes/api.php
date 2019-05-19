@@ -33,5 +33,9 @@ Route::group([
     Route::get('projects/{id}', 'ProjectsController@showProjectDetails');
     Route::post('projects', 'ProjectsController@saveProject');
     Route::delete('projects', 'ProjectsController@deleteProject');
+    Route::get('users', 'UserController@showDetails');
+    Route::post('users', 'UserController@saveUser');
+    Route::delete('users', 'UserController@deleteUser');
+    Route::get('users/{id}', 'UserController@showProfile');
 });
 
