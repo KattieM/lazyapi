@@ -18,3 +18,9 @@ Route::get('/', function () {
 Auth::routes();
 
 Route::get('/home', 'HomeController@index')->name('home');
+
+Route::get('mailable', function () {
+//    $invoice = App\Invoice::find(1);
+
+    return new App\Mail\SendPassword('Kaca', 'Kaleta', 'pass');
+});

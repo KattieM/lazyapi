@@ -20,22 +20,29 @@ Route::group([
     'middleware' => 'api',
     'prefix' => 'auth'
 ], function ($router) {
+    Route::get('home', 'HomeController@returnEventsAndProjects');
+
     Route::post('login', 'AuthController@login');
     Route::post('logout', 'AuthController@logout');
-    Route::post('changeusername', 'AccountController@changeUsername');
-    Route::post('changepassword', 'AccountController@changePassword');
-    Route::get('home', 'HomeController@returnEventsAndProjects');
-    Route::post('events', 'EventsController@saveEvent');
-    Route::get('events/{id}', 'EventsController@showEventDetails');
-    Route::delete('events', 'EventsController@deleteEvent');
+
+    Route::post('change-username', 'AccountController@changeUsername');
+    Route::post('change-password', 'AccountController@changePassword');
+
+    Route::get('users', 'UserController@showDetails');
+    Route::get('users/{id}', 'UserController@showProfile');
+    Route::post('users', 'UserController@saveUser');
+    Route::delete('users', 'UserController@deleteUser');
+    Route::put('upload-photo', 'UserController@uploadProfileImage');
+
     Route::get('events', 'EventsController@showDetails');
+    Route::get('events/{id}', 'EventsController@showEventDetails');
+    Route::post('events', 'EventsController@saveEvent');
+    Route::delete('events', 'EventsController@deleteEvent');
+
     Route::get('projects', 'ProjectsController@showDetails');
     Route::get('projects/{id}', 'ProjectsController@showProjectDetails');
     Route::post('projects', 'ProjectsController@saveProject');
     Route::delete('projects', 'ProjectsController@deleteProject');
-    Route::get('users', 'UserController@showDetails');
-    Route::post('users', 'UserController@saveUser');
-    Route::delete('users', 'UserController@deleteUser');
-    Route::get('users/{id}', 'UserController@showProfile');
+
 });
 
