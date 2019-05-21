@@ -85,7 +85,6 @@ class ProjectsController extends Controller
         }
 
         $team=$this->teamRepository->findOrCreateTeam($request['project_new_team'], $project->id);
-
         return response()->json(['project'=>$project, $team]);
     }
 
