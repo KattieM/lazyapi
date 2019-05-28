@@ -27,7 +27,7 @@ class EventsController extends Controller
     //Returns all necessary data
     public function showDetails()
     {
-        $events = Event::all()->sortByDesc('date');
+        $events = Event::orderBy('date', 'desc')->get();
         $button = "No button";
         $events_language = Language::all();
         $goings = array();
@@ -85,6 +85,6 @@ class EventsController extends Controller
     }
 
     public function showEventDetails($id){
-        return Event::findOrFail($id);
+        return Event::with('language', 'location')->findOrFail($id);
     }
 }

@@ -22,13 +22,12 @@ class UserController extends Controller
 
     public function showDetails()
     {
-        return response()->json(['users' => User::all()]);
+        return response()->json(['users' => User::where('id', '!=', '1')->get()]);
     }
 
     public function showProfile($id)
     {
-        $user = User::findOrFail($id);
-        return response()->json(['user' => $user]);
+        return User::findOrFail($id);
     }
 
     public function saveUser(Request $request)

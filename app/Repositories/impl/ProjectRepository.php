@@ -104,9 +104,11 @@ class ProjectRepository implements ProjectRepositoryInterface
 
     public function getProjectsTeams($project)
     {
-        $team_id = $project->team->id;
-        $team = Project_Attending::where('team_id', $team_id)->get();
-        return $team;
+        if($project->team){
+            $team = Project_Attending::where('team_id', $project->team->id)->get();
+            return $team;
+        }
+        return $project->team;
     }
 
     public function getProjectOrganizer($project)

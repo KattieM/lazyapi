@@ -34,10 +34,10 @@ class HomeController extends Controller
 
         $user=Auth::user();
 
-        $users=User::take(12)->get();
+        $users=User::where('id', '!=', 1)->take(12)->get();
 
-        $events = Event::orderBy('date', 'desc')->take(4)->get();
-        $projects = Project::orderBy('start_date', 'desc')->take(4)->get();
+        $events = Event::with('location', 'language')->orderBy('date', 'desc')->take(4)->get();
+        $projects = Project::with('location', 'language')->orderBy('start_date', 'desc')->take(4)->get();
 
         //foreach event check the user's going/not going status
 //        $goings=array();

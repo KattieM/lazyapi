@@ -13,10 +13,10 @@ class Event extends Model
     }
 
     public function language(){
-        return $this->belongsTo('App\Language');
+        return $this->belongsTo('App\Language', 'lang_id');
     }
     public function location(){
-        return $this->belongsTo('App\Location');
+        return $this->belongsTo('App\Location', 'loc_id');
     }
 
 

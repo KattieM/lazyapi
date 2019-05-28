@@ -101,6 +101,6 @@ class ProjectsController extends Controller
     }
 
     public function showProjectDetails($id){
-        return Project::findOrFail($id);
+        return Project::with('language', 'location')->findOrFail($id);
     }
 }

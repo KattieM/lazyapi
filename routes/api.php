@@ -21,8 +21,8 @@ Route::group([
     'prefix' => 'auth'
 ], function ($router) {
     Route::get('home', 'HomeController@returnEventsAndProjects');
-
     Route::post('login', 'AuthController@login');
+
     Route::post('logout', 'AuthController@logout');
 
     Route::post('change-username', 'AccountController@changeUsername');
@@ -44,5 +44,9 @@ Route::group([
     Route::post('projects', 'ProjectsController@saveProject');
     Route::delete('projects', 'ProjectsController@deleteProject');
 
+});
+
+Route::get('/kaca', function(){
+    return 'test';
 });
 
