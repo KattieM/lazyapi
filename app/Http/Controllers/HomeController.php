@@ -34,7 +34,7 @@ class HomeController extends Controller
 
         $user=Auth::user();
 
-        $users=User::where('id', '!=', 1)->take(12)->get();
+        $users=User::where([['id', '!=', 1], ['id', '!=', Auth::id()]])->take(12)->get();
 
         $events = Event::with('location', 'language')->orderBy('date', 'desc')->take(4)->get();
         $projects = Project::with('location', 'language')->orderBy('start_date', 'desc')->take(4)->get();
